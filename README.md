@@ -1,1 +1,2 @@
 # Alzheimers_Statistics_Project
+A statistics project on Alzheimer's Disease performed using the Kaggle Oasis Alzheimer's dataset and CDC mortality data. The aim of this project is to find correlations between different variables in our two datasets to learn more about Alzheimer's Disease and what factors might influence a diagnosis. A second purpose behind this project is to learn R and R Markdown.
