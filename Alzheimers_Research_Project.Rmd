@@ -1,0 +1,84 @@
+---
+title: "Alzheimers_Research_Project"
+author: "Abhinav Vedati"
+date: "7/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+dataFrame <- read.csv("/Users/spiderfencer/Downloads/oasis_cross-sectional.csv", header=TRUE, sep=",")
+
+```
+
+```{r}
+names(dataFrame)
+```
+
+```{r}
+
+neededData = na.omit(dataFrame[,c(7,9)])
+plot(neededData$eTIV, neededData$MMSE)
+abline(lm(MMSE ~ eTIV, data=neededData))
+
+```
+```{r}
+neededData = na.omit(dataFrame[,c(8,9)])
+plot(neededData$eTIV, neededData$CDR)
+abline(lm(CDR ~ eTIV, data=neededData))
+```
+
+```{r}
+
+neededData = na.omit(dataFrame[,c(7,10)])
+plot(neededData$nWBV, neededData$MMSE)
+abline(lm(MMSE ~ nWBV, data=neededData))
+
+```
+
+```{r}
+
+neededData = na.omit(dataFrame[,c(8,10)])
+plot(neededData$nWBV, neededData$CDR)
+abline(lm(CDR ~ nWBV, data=neededData))
+
+```
+
+```{r}
+
+neededData = na.omit(dataFrame[,c(6,8)])
+plot(neededData$SES, neededData$CDR)
+abline(lm(CDR ~ SES, data=neededData))
+
+```
+
+```{r}
+
+neededData = na.omit(dataFrame[,c(6,7)])
+plot(neededData$SES, neededData$MMSE)
+abline(lm(MMSE ~ SES, data=neededData))
+
+```
+
+```{r}
+
+neededData = na.omit(dataFrame[,c(6,9)])
+plot(neededData$SES, neededData$eTIV)
+abline(lm(eTIV ~ SES, data=neededData))
+
+```
+
+```{r}
+
+neededData = na.omit(dataFrame[,c(6,10)])
+plot(neededData$SES, neededData$nWBV)
+abline(lm(nWBV ~ SES, data=neededData))
+
+```
+
+
+
