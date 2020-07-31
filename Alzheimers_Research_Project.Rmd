@@ -1,7 +1,7 @@
 ---
 title: "Alzheimers_Research_Project"
 author: "Abhinav Vedati"
-date: "7/21/2020"
+date: "7/28/2020"
 output: html_document
 ---
 
@@ -27,9 +27,21 @@ abline(lm(MMSE ~ eTIV, data=neededData))
 
 ```
 ```{r}
+neededData = na.omit(dataFrame[,c(7,9)])
+plot(neededData$eTIV, log(neededData$MMSE))
+abline(lm(log(neededData$MMSE) ~ neededData$eTIV))
+```
+
+```{r}
 neededData = na.omit(dataFrame[,c(8,9)])
 plot(neededData$eTIV, neededData$CDR)
 abline(lm(CDR ~ eTIV, data=neededData))
+```
+
+```{r}
+neededData = na.omit(dataFrame[,c(8,9)])
+plot(neededData$eTIV, log(neededData$CDR))
+abline(lm(log(neededData$CDR) ~ neededData$eTIV))
 ```
 
 ```{r}
