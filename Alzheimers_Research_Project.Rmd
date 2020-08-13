@@ -1,7 +1,7 @@
 ---
-title: "TODO: find a better title"
+title: "Alzheimer's Disease Resarch Project"
 author: "Abhinav Vedati"
-date: "7/28/2020"
+date: "8/13/2020"
 output: html_document
 ---
 
@@ -17,17 +17,17 @@ knitr::opts_chunk$set(include = FALSE)
 
 First, we will load our dataset and inspect it using the names function. This will allow us to see the names of the columns that our dataset contains.
 
-```{r echo=TRUE}
+```{r Setup 1, echo=TRUE}
 dataFrame <- read.csv("/Users/spiderfencer/Downloads/oasis_cross-sectional.csv", header=TRUE, sep=",")
 names(dataFrame)
 ```
 
-Next, we will define two functions, which will try to fit data to a linear model and an exponential model, respectively. Both of these functions will return the r squared correlation coefficient for their models.
+Next, we will define two functions, which will try to fit data to a linear model and a logarithmic model, respectively. Both of these functions will return the r squared correlation coefficient for their models.
 
-```{r}
+```{r Setup 2, echo=TRUE}
 plot_linear <- function(columns, name1, name2) {
   neededData = na.omit(columns)
-  plot(neededData[,name1], neededData[,name2])
+  plot(neededData[,name1], neededData[,name2], xlab=name1, ylab=name2)
   model <- lm(neededData[,name2] ~ neededData[,name1]) 
   abline(model)
   summary(model)$r.squared
@@ -35,32 +35,29 @@ plot_linear <- function(columns, name1, name2) {
 
 plot_logarithmic <- function(columns, name1, name2) {
   neededData = na.omit(columns)
-  plot(neededData[,name1], log(neededData[,name2]))
+  plot(neededData[,name1], log(neededData[,name2]), xlab=name1, ylab=paste("log(",name2,")", sep=""))
   model <- lm(log(neededData[,name2]) ~ neededData[,name1])
   abline(model)
   summary(model)$r.squared
 }
 ```
 
-We will now try to correlate the eTIV (Estimated Total Intracranial Volume), nWBV (Normalized Whole Brain Volume), and SES (Socio-economic Status) variables with MMSE and CDR. We will also see if there is any significant correlation between SES and eTIV and nWBV.
+We will now try to correlate the eTIV (Estimated Total Intracranial Volume) and nWBV (Normalized Whole Brain Volume) variables with MMSE.
 
-```{r}
-a <- plot_linear(dataFrame[,c(7,9)], "eTIV", "MMSE")
-b <- plot_logarithmic(dataFrame[,c(7,9)], "eTIV", "MMSE")
-c <- plot_linear(dataFrame[,c(8,9)], "eTIV", "CDR")
-d <- plot_linear(dataFrame[,c(7,10)], "nWBV", "MMSE")
-e <- plot_linear(dataFrame[,c(8,10)], "nWBV", "CDR")
-f <- plot_linear(dataFrame[,c(6,8)], "SES", "CDR")
-g <- plot_linear(dataFrame[,c(6,7)], "SES", "MMSE")
-h <- plot_linear(dataFrame[,c(6,9)], "SES", "eTIV")
-i <- plot_linear(dataFrame[,c(6,10)], "SES", "nWBV")
+```{r Figure 1, echo=TRUE}
+R_squared_eTIV_MMSE_lin <- plot_linear(dataFrame[,c(7,9)], "eTIV", "MMSE")
+R_squared_eTIV_MMSE_log <- plot_logarithmic(dataFrame[,c(7,9)], "eTIV", "MMSE")
+R_squared_nWBV_MMSE_lin <- plot_linear(dataFrame[,c(7,10)], "nWBV", "MMSE")
 ```
 
+It looks like R_squared_eTIV_MMSE_lin and R_squared_eTIV_MMSE_log are not statistically significant, thus there is no significant linear or nonlinear correlation between eTIV and MMSE. R_squared_nWBV_MMSE_lin represents a weak linear correlation between nWBV and MMSE, and in previous tests, trying to calculate a nonlinear correlation between nWBV and MMSE resulted in an error, and thus a nonlinear correlation does not exist between nWBV and MMSE.
 
 ## Part 2: Further inspection
 
-Insert text here.
+We can now use some of our categorical variables, such as SES (Socio-economic status) and CDR (Clinical Dementia Rating) to find new correlations using neural networks for classification. 
+
+TODO: the rest of this.
 
 ## Conclusion
 
-Insert text here.
+TODO: this.
