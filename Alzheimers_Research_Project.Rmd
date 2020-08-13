@@ -1,96 +1,66 @@
 ---
-title: "Alzheimers_Research_Project"
+title: "TODO: find a better title"
 author: "Abhinav Vedati"
 date: "7/28/2020"
 output: html_document
 ---
 
+## Introduction
+
+Alzheimer's Disease is one of the world's most devastating and deadly diseases. Alzheimer's Disease affects nearly 50 million people worldwide (https://www.alzheimers.net/resources/alzheimers-statistics/) and more than 5 million people in the United States (https://www.alz.org/alzheimers-dementia/facts-figures#:~:text=More%20than%205%20million%20Americans%20of%20all%20ages%20have%20Alzheimer's,are%20age%2075%20or%20older.) Despite these devastating statistics, Alzheimer's Disease is one of the least understood diseases. While progress has been made over the past several decades in finding cures and treatments for cancers and diseases such as measles, there has yet to be a single drug that improves the condition of or cures Alzheimer's Disease (all simply slow the progression of the disease). Part of the reason why we have not yet found a cure for Alzheimer's Disease is that we don't understand the underlying causes of the disease very well. In this paper, I aim to take the first steps towards establishing causality in the context of Alzheimer's Disease, by finding variables that are correlated with clinical dementia rating (a 5 point scale used to characterize the development of dementias such as Alzheimer's Disease within a patient) and Mini-Mental State Exam scores (the Mini-Mental State Exam is a quiz given to dementia patients; it is graded on a scale from 0 to 30 points, where a higher score indicates milder dementia). I will be using the following dataset, which is provided by Kaggle and the Open Access Series of Imaging Studies (OASIS): https://www.kaggle.com/jboysen/mri-and-alzheimers
+
+## Part 1: Finding correlations
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(include = FALSE)
 ```
 
-```{r}
+First, we will load our dataset and inspect it using the names function. This will allow us to see the names of the columns that our dataset contains.
 
+```{r echo=TRUE}
 dataFrame <- read.csv("/Users/spiderfencer/Downloads/oasis_cross-sectional.csv", header=TRUE, sep=",")
-
-```
-
-```{r}
 names(dataFrame)
 ```
 
-```{r}
-
-neededData = na.omit(dataFrame[,c(7,9)])
-plot(neededData$eTIV, neededData$MMSE)
-abline(lm(MMSE ~ eTIV, data=neededData))
-
-```
-```{r}
-neededData = na.omit(dataFrame[,c(7,9)])
-plot(neededData$eTIV, log(neededData$MMSE))
-abline(lm(log(neededData$MMSE) ~ neededData$eTIV))
-```
+Next, we will define two functions, which will try to fit data to a linear model and an exponential model, respectively. Both of these functions will return the r squared correlation coefficient for their models.
 
 ```{r}
-neededData = na.omit(dataFrame[,c(8,9)])
-plot(neededData$eTIV, neededData$CDR)
-abline(lm(CDR ~ eTIV, data=neededData))
-```
+plot_linear <- function(columns, name1, name2) {
+  neededData = na.omit(columns)
+  plot(neededData[,name1], neededData[,name2])
+  model <- lm(neededData[,name2] ~ neededData[,name1]) 
+  abline(model)
+  summary(model)$r.squared
+}
 
-```{r}
-neededData = na.omit(dataFrame[,c(8,9)])
-plot(neededData$eTIV, log(neededData$CDR))
-abline(lm(log(neededData$CDR) ~ neededData$eTIV))
+plot_logarithmic <- function(columns, name1, name2) {
+  neededData = na.omit(columns)
+  plot(neededData[,name1], log(neededData[,name2]))
+  model <- lm(log(neededData[,name2]) ~ neededData[,name1])
+  abline(model)
+  summary(model)$r.squared
+}
 ```
 
-```{r}
-
-neededData = na.omit(dataFrame[,c(7,10)])
-plot(neededData$nWBV, neededData$MMSE)
-abline(lm(MMSE ~ nWBV, data=neededData))
-
-```
+We will now try to correlate the eTIV (Estimated Total Intracranial Volume), nWBV (Normalized Whole Brain Volume), and SES (Socio-economic Status) variables with MMSE and CDR. We will also see if there is any significant correlation between SES and eTIV and nWBV.
 
 ```{r}
-
-neededData = na.omit(dataFrame[,c(8,10)])
-plot(neededData$nWBV, neededData$CDR)
-abline(lm(CDR ~ nWBV, data=neededData))
-
-```
-
-```{r}
-
-neededData = na.omit(dataFrame[,c(6,8)])
-plot(neededData$SES, neededData$CDR)
-abline(lm(CDR ~ SES, data=neededData))
-
-```
-
-```{r}
-
-neededData = na.omit(dataFrame[,c(6,7)])
-plot(neededData$SES, neededData$MMSE)
-abline(lm(MMSE ~ SES, data=neededData))
-
-```
-
-```{r}
-
-neededData = na.omit(dataFrame[,c(6,9)])
-plot(neededData$SES, neededData$eTIV)
-abline(lm(eTIV ~ SES, data=neededData))
-
-```
-
-```{r}
-
-neededData = na.omit(dataFrame[,c(6,10)])
-plot(neededData$SES, neededData$nWBV)
-abline(lm(nWBV ~ SES, data=neededData))
-
+a <- plot_linear(dataFrame[,c(7,9)], "eTIV", "MMSE")
+b <- plot_logarithmic(dataFrame[,c(7,9)], "eTIV", "MMSE")
+c <- plot_linear(dataFrame[,c(8,9)], "eTIV", "CDR")
+d <- plot_linear(dataFrame[,c(7,10)], "nWBV", "MMSE")
+e <- plot_linear(dataFrame[,c(8,10)], "nWBV", "CDR")
+f <- plot_linear(dataFrame[,c(6,8)], "SES", "CDR")
+g <- plot_linear(dataFrame[,c(6,7)], "SES", "MMSE")
+h <- plot_linear(dataFrame[,c(6,9)], "SES", "eTIV")
+i <- plot_linear(dataFrame[,c(6,10)], "SES", "nWBV")
 ```
 
 
+## Part 2: Further inspection
 
+Insert text here.
+
+## Conclusion
+
+Insert text here.
