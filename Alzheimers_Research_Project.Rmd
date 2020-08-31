@@ -48,15 +48,48 @@ We will now try to correlate the eTIV (Estimated Total Intracranial Volume) and 
 R_squared_eTIV_MMSE_lin <- plot_linear(dataFrame[,c(7,9)], "eTIV", "MMSE")
 R_squared_eTIV_MMSE_log <- plot_logarithmic(dataFrame[,c(7,9)], "eTIV", "MMSE")
 R_squared_nWBV_MMSE_lin <- plot_linear(dataFrame[,c(7,10)], "nWBV", "MMSE")
+
+writeLines(c(
+  paste0("R_squared_eTIV_MMSE_lin: ", R_squared_eTIV_MMSE_lin),
+  paste0("R_squared_eTIV_MMSE_log: ", R_squared_eTIV_MMSE_log),
+  paste0("R_squared_nWBV_MMSE_lin: ", R_squared_nWBV_MMSE_lin)
+))
 ```
 
 It looks like R_squared_eTIV_MMSE_lin and R_squared_eTIV_MMSE_log are not statistically significant, thus there is no significant linear or nonlinear correlation between eTIV and MMSE. R_squared_nWBV_MMSE_lin represents a weak linear correlation between nWBV and MMSE, and in previous tests, trying to calculate a nonlinear correlation between nWBV and MMSE resulted in an error, and thus a nonlinear correlation does not exist between nWBV and MMSE.
 
 ## Part 2: Further inspection
 
-We can now use some of our categorical variables, such as SES (Socio-economic status) and CDR (Clinical Dementia Rating) to find new correlations using neural networks for classification. 
+We can now use some of our categorical variables, such as SES (Socio-economic status) and CDR (Clinical Dementia Rating) to find new correlations using the variance form of the Kruskal-Wallis H Test, which is described here: https://medium.com/@outside2SDs/an-overview-of-correlation-measures-between-categorical-and-continuous-variables-4c7f85610365#:~:text=There%20are%20many%20ways%20to,variance%20of%20the%20continuous%20variable.
 
-TODO: the rest of this.
+```{r}
+# http://www.sthda.com/english/wiki/one-way-anova-test-in-r
+# http://onetipperday.sterding.com/2015/08/using-anova-to-get-correlation-between.html
+
+anova_correlation <- function(columns, name1, name2) {
+  neededData = na.omit(columns)
+  plot(neededData[,name1], neededData[,name2], xlab=name1, ylab=name2)
+  model <- aov(neededData[,name2] ~ neededData[,name1]) 
+  summary.lm(model)$r.squared
+}
+```
+
+```{r}
+R_squared_CDR_eTIV_anova <- anova_correlation(dataFrame[,c(8,9)], "CDR", "eTIV")
+R_squared_CDR_nWBV_anova <- anova_correlation(dataFrame[,c(8,10)], "CDR", "nWBV")
+R_squared_MMSE_Educ_anova <- anova_correlation(dataFrame[,c(5,7)], "Educ", "MMSE")
+
+
+writeLines(c(
+  paste0("R_squared_CDR_eTIV_anova: ", R_squared_CDR_eTIV_anova),
+  paste0("R_squared_CDR_nWBV_anova: ", R_squared_CDR_nWBV_anova),
+  paste0("R_squared_MMSE_Educ_anova: ", R_squared_MMSE_Educ_anova)
+))
+```
+
+## Neural Network
+
+TODO: this
 
 ## Conclusion
 
